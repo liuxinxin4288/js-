@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>放大镜js版</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #content{
+            position: relative;
+            
+        }
+        #small{
+            width: 320px;
+            height: 320px;
+            border: 1px solid red;
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: 20px;
+        }
+        #mark{
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            opacity: 0.5;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+        }
+        #big{
+            width: 320px;
+            height: 320px;
+            border: 1px solid red;
+            position: absolute;
+            left: 360px;
+            top: 0;
+            overflow: hidden;
+            display: none;
+            margin-top: 20px;
+        }
+        #big img{
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <div id="small">
+            <img src="./img/small.png" alt="">
+            <div id="mark"></div>
+        </div>
+        <div id="big">
+            <img src="./img/big.png" alt="">
+        </div>
+    </div>
+</body>
+<script>
+    window.onload = function(){
+        var oSmall = document.getElementById('small'),
+            oBig = document.getElementById('big'),
+            oMark = document.getElementById('mark'),
+            bigImg = oBig.getElementsByTagName('img')[0];
+
+            oSmall.onmouseover = function(){
+                oMark.style.display = "block";
+                oBig.style.display = "block";
+            }
+            oSmall.onmouseout = function(){
+                oMark.style.display = "none";
+                oBig.style.display = "none";
+            }
+            oSmall.onmousemove = function(e){
+                var e = e || window.event;
+
+                var x = e.clientX - oSmall.offsetLeft;
+                var y = e.clientY - oSmall.offsetTop;
+
+                //x,y 此时为在small内距离边框的left&right
+                var markLeft = x - Math.floor((oMark.offsetWidth)/2);
+                var markTop = y - Math.floor((oMark.offsetHeight)/2);
+
+                if(markLeft<0){
+                    markLeft = 0;
+                }
+                if(markTop<0){
+                    markTop = 0;
+                }
+                if(markLeft+oMark.offsetHeight>oSmall.offsetWidth){
+                    markLeft = oSmall.offsetWidth - oMark.offsetWidth;
+                }
+                if(markTop+oMark.offsetHeight>oSmall.offsetHeight){
+                    markTop = oSmall.offsetHeight - oMark.offsetHeight;
+                }
+                oMark.style.left = markLeft + 'px';
+                oMark.style.top = markTop + 'px';
+
+                /*计算大图的移动距离*/
+
+                // var bigLeft = (bigImg.offsetWidth * markLeft) / oSmall.offsetWidth;
+                // var bigTop = (bigImg.offsetHeight * markTop) / oSmall.offsetHeight;
+                var bigLeft = markLeft * (bigImg.offsetWidth-oBig.offsetWidth) / (oSmall.offsetWidth-oMark.offsetWidth);
+                var bigTop = markTop * (bigImg.offsetHeight-oBig.offsetHeight) / (oSmall.offsetHeight-oMark.offsetHeight);
+
+                bigImg.style.left = - bigLeft + 'px';
+                bigImg.style.top = - bigTop + 'px';
+            }
+    }
+</script>
+</html>
